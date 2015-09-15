@@ -1,11 +1,12 @@
-(defproject reagent "0.5.2-SNAPSHOT"
+(defproject org.clojars.jaen/reagent "0.5.2-SNAPSHOT"
   :url "http://github.com/reagent-project/reagent"
   :license {:name "MIT"}
   :description "A simple ClojureScript interface to React"
 
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "1.7.48"]
-                 [cljsjs/react "0.13.3-1"]]
+                 [org.clojars.jaen/clojurescript "0.0-SNAPSHOT"]
+                 ;[cljsjs/react "0.13.3-1"]
+                 ]
 
   :plugins [[lein-cljsbuild "1.0.6"]
             [codox "0.8.12"]]
@@ -13,7 +14,7 @@
   :source-paths ["src"]
 
   :codox {:language :clojurescript
-          :exclude clojure.string}  
+          :exclude clojure.string}
 
   :profiles {:test {:cljsbuild
                     {:builds {:client {:source-paths ["test"]}}}}
@@ -34,13 +35,13 @@
                                   :optimizations :none
                                   :output-dir "outsite/public/js/out"
                                   :asset-path "js/out"}}}}}]
-             
+
              :site {:resource-paths ^:replace ["outsite"]
                     :figwheel {:css-dirs ^:replace ["outsite/public/css"]}
                     :cljsbuild
                     {:builds {:client
                               {:notify-command ["node" "bin/gen-site.js"]}}}}
-             
+
              :prod [:site
                     {:cljsbuild
                      {:builds {:client
@@ -50,7 +51,7 @@
                                            :output-dir "target/client"}}}}}]
 
              :prod-test [:test :prod]
-             
+
              :dev-notest [:dev
                           {:cljsbuild
                            {:builds {:client
@@ -71,6 +72,6 @@
                                        "examples/simple/src"
                                        "examples/geometry/src"]
                         :compiler {:output-to "outsite/public/js/main.js"}}}}
-  
+
   :figwheel {:http-server-root "public" ;; assumes "resources"
              :repl false})

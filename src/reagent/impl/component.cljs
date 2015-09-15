@@ -1,5 +1,6 @@
 (ns reagent.impl.component
-  (:require [reagent.impl.util :as util]
+  (:require [module$react$lib$ReactClass :as ReactClass]
+            [reagent.impl.util :as util]
             [reagent.impl.batching :as batch]
             [reagent.ratom :as ratom]
             [reagent.interop :refer-macros [.' .!]]
@@ -230,7 +231,7 @@
   [body]
   (assert (map? body))
   (let [spec (cljsify body)
-        res (.' js/React createClass spec)
+        res (ReactClass/createClass spec)
         f (fn [& args]
             (warn "Calling the result of create-class as a function is "
                   "deprecated in " (.' res :displayName) ". Use a vector "
@@ -272,7 +273,7 @@
 (def elem-counter 0)
 
 (defn reactify-component [comp]
-  (.' js/React createClass
+  (ReactClass/createClass
       #js{:displayName "react-wrapper"
           :render
           (fn []

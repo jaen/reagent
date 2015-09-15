@@ -1,7 +1,10 @@
 
 (ns reagent.core
   (:refer-clojure :exclude [partial atom flush])
-  (:require [cljsjs.react]
+  (:require ;[cljsjs.react]
+            ;React
+            [module$react$lib$ReactElement :as ReactElement]
+            [module$react$lib$ReactServerRendering :as ReactServerRendering]
             [reagent.impl.template :as tmpl]
             [reagent.impl.component :as comp]
             [reagent.impl.util :as util]
@@ -30,13 +33,13 @@ which is equivalent to
    (create-element type nil))
   ([type props]
    (assert (not (map? props)))
-   (js/React.createElement type props))
+   (ReactElement/createElement type props))
   ([type props child]
    (assert (not (map? props)))
-   (js/React.createElement type props child))
+   (ReactElement/createElement type props child))
   ([type props child & children]
    (assert (not (map? props)))
-   (apply js/React.createElement type props child children)))
+   (apply ReactElement/createElement type props child children)))
 
 (defn as-element
   "Turns a vector of Hiccup syntax into a React element. Returns form unchanged if it is not a vector."
@@ -59,7 +62,7 @@ just like a Reagent component function or class in Hiccup forms."
   (comp/reactify-component c))
 
 (defn render
-  "Render a Reagent component into the DOM. The first argument may be 
+  "Render a Reagent component into the DOM. The first argument may be
 either a vector (using Reagent's Hiccup syntax), or a React element. The second argument should be a DOM node.
 
 Optionally takes a callback that is called when the component is in place.
@@ -81,7 +84,7 @@ Returns the mounted component instance."
   "Turns a component into an HTML string."
   ([component]
      (binding [comp/*non-reactive* true]
-       (.' js/React renderToString (as-element component)))))
+       (ReactServerRendering/renderToString (as-element component)))))
 
 ;; For backward compatibility
 (def as-component as-element)
@@ -92,7 +95,7 @@ Returns the mounted component instance."
   "Turns a component into an HTML string, without data-react-id attributes, etc."
   ([component]
      (binding [comp/*non-reactive* true]
-       (.' js/React renderToStaticMarkup (as-element component)))))
+       (ReactServerRendering/renderToStaticMarkup (as-element component)))))
 
 (defn ^:export force-update-all
   "Force re-rendering of all mounted Reagent components. This is
@@ -291,6 +294,6 @@ the result can be compared with ="
 (defn component-path
   ;; Try to return the path of component c as a string.
   ;; Maybe useful for debugging and error reporting, but may break
-  ;; with future versions of React (and return nil). 
+  ;; with future versions of React (and return nil).
   [c]
   (comp/component-path c))

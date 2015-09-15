@@ -1,5 +1,6 @@
 (ns reagent.impl.util
-  (:require [reagent.debug :refer-macros [dbg log warn]]
+  (:require [module$react$lib$ReactMount :as ReactMount]
+            [reagent.debug :refer-macros [dbg log warn]]
             [reagent.interop :refer-macros [.' .!]]
             [clojure.string :as string]))
 
@@ -114,7 +115,7 @@
   (let [rendered (volatile! nil)]
     (try
       (binding [*always-update* true]
-        (->> (.' js/React render (comp) container
+        (->> (ReactMount/render (comp) container
                  (fn []
                    (binding [*always-update* false]
                      (swap! roots assoc container [comp container])
@@ -130,7 +131,7 @@
 
 (defn unmount-component-at-node [container]
   (swap! roots dissoc container)
-  (.' js/React unmountComponentAtNode container))
+  (ReactMount/unmountComponentAtNode container))
 
 (defn force-update-all []
   (doseq [v (vals @roots)]

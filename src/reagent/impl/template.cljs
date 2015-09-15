@@ -1,5 +1,6 @@
 (ns reagent.impl.template
-  (:require [clojure.string :as string]
+  (:require [module$react$lib$ReactElement :as ReactElement]
+            [clojure.string :as string]
             [reagent.impl.util :as util :refer [is-client]]
             [reagent.impl.component :as comp]
             [reagent.impl.batching :as batch]
@@ -112,24 +113,24 @@
                    ; just set the value, no need to worry about a cursor
                    (.! node :value value)
 
-                   ;; Setting "value" (below) moves the cursor position to the end which 
-                   ;; gives the user a jarring experience. 
-                   ;; 
-                   ;; But repositioning the cursor within the text, turns out 
-                   ;; to be quite a challenge because changes in the text can be 
+                   ;; Setting "value" (below) moves the cursor position to the end which
+                   ;; gives the user a jarring experience.
+                   ;;
+                   ;; But repositioning the cursor within the text, turns out
+                   ;; to be quite a challenge because changes in the text can be
                    ;; triggered by various events like:
                    ;;    - a validation function rejecting a certain user inputted char
                    ;;    - the user enters a lower case char, but is transformed to upper.
                    ;;    - the user selects multiple chars and deletes text
-                   ;;    - the user pastes in multiple chars, and some of them are rejected 
+                   ;;    - the user pastes in multiple chars, and some of them are rejected
                    ;;      by a validator.
-                   ;;    - the user selects multiple chars and then types in a single 
-                   ;;      new char to repalce them all. 
-                   ;; Coming up with a sane cursor repositioning strategy hasn't been easy 
+                   ;;    - the user selects multiple chars and then types in a single
+                   ;;      new char to repalce them all.
+                   ;; Coming up with a sane cursor repositioning strategy hasn't been easy
                    ;; ALTHOUGH in the end, it kinda fell out nicely, and it appears to sanely
-                   ;; handle all the cases we could think of.  
+                   ;; handle all the cases we could think of.
                    ;; So this is just a warning.  The code below is simple enough, but if
-                   ;; you are tempted to change it, be aware of all the scenarios you have handle. 
+                   ;; you are tempted to change it, be aware of all the scenarios you have handle.
                    (let [existing-offset-from-end (- (count node-value) (.' node :selectionStart))
                          new-cursor-offset        (- (count value) existing-offset-from-end)]
                      (.! node :value value)
@@ -232,7 +233,7 @@
   (let [c (as-class tag)
         jsprops #js{:argv v}]
     (some->> v key-from-vec (.! jsprops :key))
-    (.' js/React createElement c jsprops)))
+    (ReactElement/createElement c jsprops)))
 
 (defn adapt-react-class [c]
   (NativeWrapper. #js{:name c
@@ -333,12 +334,12 @@
 (defn make-element [argv comp jsprops first-child]
   (case (- (count argv) first-child)
     ;; Optimize cases of zero or one child
-    0 (.' js/React createElement comp jsprops)
+    0 (ReactElement/createElement comp jsprops)
 
-    1 (.' js/React createElement comp jsprops
+    1 (ReactElement/createElement comp jsprops
           (as-element (nth argv first-child)))
 
-    (.apply (.' js/React :createElement) nil
+    (.apply ReactElement/createElement nil
             (reduce-kv (fn [a k v]
                          (when (>= k first-child)
                            (.push a (as-element v)))
